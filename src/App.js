@@ -38,12 +38,13 @@ class App extends Component {
   validation(name) {
     const {data, index} = this.state;
     const row = data[index];
-    const value = this.state[name];
+    const value = this.state[name].toLowerCase();
+    const rowValue = row[name].toLowerCase();
     if (value === '') {
       return null;
-    } else if (value === row[name]) {
+    } else if (value === rowValue) {
       return 'success'
-    } else if (row[name].indexOf(value) === 0) {
+    } else if (rowValue.indexOf(value) === 0) {
       return 'warning';
     }
     return 'error';
@@ -59,9 +60,9 @@ class App extends Component {
     const {infinitive, pastSimple, pastParticiple, data, index} = this.state;
     const row = data[index];
     return (data.length === index + 1) ||
-      row.infinitive !== infinitive ||
-      row.pastSimple !== pastSimple ||
-      row.pastParticiple !== pastParticiple;
+      row.infinitive.toLowerCase() !== infinitive.toLowerCase() ||
+      row.pastSimple.toLowerCase() !== pastSimple.toLowerCase() ||
+      row.pastParticiple.toLowerCase() !== pastParticiple.toLowerCase();
   }
 
   onNextClick() {

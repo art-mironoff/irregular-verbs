@@ -1,5 +1,5 @@
 import React from 'react';
-import {FormGroup, FormControl, Glyphicon, HelpBlock} from 'react-bootstrap';
+import {FormGroup, FormControl, HelpBlock} from 'react-bootstrap';
 
 export default (props) => {
   return (

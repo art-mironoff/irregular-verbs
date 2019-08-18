@@ -1,125 +1,117 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import {Container, Row, Col, Button} from 'react-bootstrap';
 import InputGroup from './components/InputGroup';
-import db from './data.json';
+import {data} from './data.json';
 import './App.css';
 
-class App extends Component {
-  state = {
-    data: db.data.filter(row => row.enable),
-    index: Number(localStorage.getItem('index')) || 0,
+function App() {
+  const [index, setIndex] = useState(Number(localStorage.getItem('index')) || 0);
+  const [values, setValues] = useState({
     infinitive: "",
     pastSimple: "",
-    pastParticiple: "",
-    ru: "",
-    showHints: false
-  };
+    pastParticiple: ""
+  });
+  const [showHints, setShowHints] = useState(false);
 
-  onChange = event => {
-    this.setState({
+  const onChange = event => {
+    setValues({
+      ...values,
       [event.target.name]: event.target.value
-    })
-  };
-
-  onKeyPress = target => {
-    if(target.charCode === 13){
-      this.onNextClick();
-    }
-  };
-
-  isValid(name) {
-    const {data, index} = this.state;
-    const row = data[index];
-    const value = this.state[name].toLowerCase();
-    const rowValue = row[name].toLowerCase();
-    return value === rowValue;
-  }
-
-  onHelpClick = () => {
-    this.setState({
-      showHints: !this.state.showHints
     });
   };
 
-  nextBtnDisabled = () => {
-    const {infinitive, pastSimple, pastParticiple, data, index} = this.state;
-    const row = data[index];
-    return (data.length === index + 1) ||
-      row.infinitive.toLowerCase() !== infinitive.toLowerCase() ||
-      row.pastSimple.toLowerCase() !== pastSimple.toLowerCase() ||
-      row.pastParticiple.toLowerCase() !== pastParticiple.toLowerCase();
+  const onKeyPress = target => {
+    if (target.charCode === 13){
+      onNextClick();
+    }
   };
 
-  onNextClick = () => {
-    if (!this.nextBtnDisabled()) {
-      const nextIndex = this.state.index + 1;
-      this.setState({
-        index: nextIndex,
+  const isValid = (name) => {
+    const row = data[index];
+    const value = values[name].toLowerCase();
+    const rowValue = row[name].toLowerCase();
+    return value === rowValue;
+  };
+
+  const onHelpClick = () => {
+    setShowHints(!showHints);
+  };
+
+  const nextBtnDisabled = () => {
+    const row = data[index];
+    return (data.length === index + 1) ||
+      row.infinitive.toLowerCase() !== values.infinitive.toLowerCase() ||
+      row.pastSimple.toLowerCase() !== values.pastSimple.toLowerCase() ||
+      row.pastParticiple.toLowerCase() !== values.pastParticiple.toLowerCase();
+  };
+
+  const onNextClick = () => {
+    if (!nextBtnDisabled()) {
+      const nextIndex = index + 1;
+      setIndex(nextIndex);
+      setValues({
         infinitive: "",
         pastSimple: "",
-        pastParticiple: "",
-        ru: "",
-        showHints: false
+        pastParticiple: ""
       });
+      setShowHints(false);
       localStorage.setItem('index', nextIndex.toString());
     }
   };
 
-  render() {
-    const {data, index, infinitive, pastSimple, pastParticiple, showHints} = this.state;
-    const row = data[index];
-    return (
-      <Container>
-        <Row className="justify-content-sm-center">
-          <Col xs={12} sm={9} md={7} lg={5} xl={4}>
-            <form>
-              <h3>{row.ru}</h3>
-              <InputGroup
-                autoFocus
-                name="infinitive"
-                placeholder="Infinitive"
-                showHints={showHints}
-                value={infinitive}
-                hint={row.infinitive}
-                isValid={this.isValid('infinitive')}
-                onKeyPress={this.onKeyPress}
-                onChange={this.onChange}
-                />
-              <InputGroup
-                name="pastSimple"
-                placeholder="Past Simple"
-                showHints={showHints}
-                value={pastSimple}
-                hint={row.pastSimple}
-                isValid={this.isValid('pastSimple')}
-                onKeyPress={this.onKeyPress}
-                onChange={this.onChange}
-                />
-              <InputGroup
-                name="pastParticiple"
-                placeholder="Past Participle"
-                showHints={showHints}
-                value={pastParticiple}
-                hint={row.pastParticiple}
-                isValid={this.isValid('pastParticiple')}
-                onKeyPress={this.onKeyPress}
-                onChange={this.onChange}
-                />
-              <div className="buttons">
-                <Button className="pull-left" onClick={this.onHelpClick}>
-                  {!showHints ? 'Show hints' : 'Hide hints'}
-                </Button>
-                <span>{index + 1} of {data.length}</span>
-                <Button className="btn-success pull-right" disabled={this.nextBtnDisabled()} onClick={this.onNextClick}>
-                  Next
-                </Button>
-              </div>
-            </form>
-          </Col>
-        </Row>
-      </Container>
-    );
-  }
+  const row = data[index];
+
+  return (
+    <Container>
+      <Row className="justify-content-sm-center">
+        <Col xs={12} sm={9} md={7} lg={5} xl={4}>
+          <form>
+            <h3>{row.ru}</h3>
+            <InputGroup
+              autoFocus
+              name="infinitive"
+              placeholder="Infinitive"
+              showHints={showHints}
+              value={values.infinitive}
+              hint={row.infinitive}
+              isValid={isValid('infinitive')}
+              onKeyPress={onKeyPress}
+              onChange={onChange}
+            />
+            <InputGroup
+              name="pastSimple"
+              placeholder="Past Simple"
+              showHints={showHints}
+              value={values.pastSimple}
+              hint={row.pastSimple}
+              isValid={isValid('pastSimple')}
+              onKeyPress={onKeyPress}
+              onChange={onChange}
+            />
+            <InputGroup
+              name="pastParticiple"
+              placeholder="Past Participle"
+              showHints={showHints}
+              value={values.pastParticiple}
+              hint={row.pastParticiple}
+              isValid={isValid('pastParticiple')}
+              onKeyPress={onKeyPress}
+              onChange={onChange}
+            />
+            <div className="buttons">
+              <Button className="pull-left" onClick={onHelpClick}>
+                {!showHints ? 'Show hints' : 'Hide hints'}
+              </Button>
+              <span>{index + 1} of {data.length}</span>
+              <Button className="btn-success pull-right" disabled={nextBtnDisabled()} onClick={onNextClick}>
+                Next
+              </Button>
+            </div>
+          </form>
+        </Col>
+      </Row>
+    </Container>
+  );
 }
 
 export default App;

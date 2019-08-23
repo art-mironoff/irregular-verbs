@@ -4,50 +4,57 @@ import InputGroup from './components/InputGroup';
 import {data} from './data.json';
 import './App.css';
 
-function App() {
-  const [index, setIndex] = useState(Number(localStorage.getItem('index')) || 0);
-  const [values, setValues] = useState({
+interface IValue {
+  infinitive: string,
+  pastSimple: string,
+  pastParticiple: string,
+}
+
+interface IDataRow extends IValue{
+  ru: string,
+  enable: boolean,
+}
+
+function App(): JSX.Element {
+  const [index, setIndex] = useState<number>(Number(localStorage.getItem('index')) || 0);
+  const [values, setValues] = useState<IValue>({
     infinitive: "",
     pastSimple: "",
     pastParticiple: ""
   });
-  const [showHints, setShowHints] = useState(false);
+  const [showHints, setShowHints] = useState<boolean>(false);
 
-  const onChange = event => {
+  const onChange = (event: any):void => {
     setValues({
       ...values,
       [event.target.name]: event.target.value
     });
   };
 
-  const onKeyPress = target => {
-    if (target.charCode === 13){
+  const onKeyPress = (event: React.KeyboardEvent):void => {
+    if (event.charCode === 13){
       onNextClick();
     }
   };
 
-  const isValid = (name) => {
-    const row = data[index];
-    const value = values[name].toLowerCase();
-    const rowValue = row[name].toLowerCase();
+  const isValid = (name:keyof IValue):boolean => {
+    const row:IDataRow = data[index];
+    const value:string = values[name].toLowerCase();
+    const rowValue:string = row[name].toLowerCase();
     return value === rowValue;
   };
 
-  const onHelpClick = () => {
-    setShowHints(!showHints);
-  };
-
-  const nextBtnDisabled = () => {
-    const row = data[index];
+  const nextBtnDisabled = ():boolean => {
+    const row:IDataRow = data[index];
     return (data.length === index + 1) ||
       row.infinitive.toLowerCase() !== values.infinitive.toLowerCase() ||
       row.pastSimple.toLowerCase() !== values.pastSimple.toLowerCase() ||
       row.pastParticiple.toLowerCase() !== values.pastParticiple.toLowerCase();
   };
 
-  const onNextClick = () => {
+  const onNextClick = ():void => {
     if (!nextBtnDisabled()) {
-      const nextIndex = index + 1;
+      const nextIndex:number = index + 1;
       setIndex(nextIndex);
       setValues({
         infinitive: "",
@@ -59,7 +66,7 @@ function App() {
     }
   };
 
-  const row = data[index];
+  const row:IDataRow = data[index];
 
   return (
     <Container>
@@ -99,7 +106,7 @@ function App() {
               onChange={onChange}
             />
             <div className="buttons">
-              <Button className="pull-left" onClick={onHelpClick}>
+              <Button className="pull-left" onClick={() => {setShowHints(!showHints)}}>
                 {!showHints ? 'Show hints' : 'Hide hints'}
               </Button>
               <span>{index + 1} of {data.length}</span>

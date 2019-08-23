@@ -1,21 +1,31 @@
-import React, {useState} from 'react';
-import {FormGroup, FormControl, FormText} from 'react-bootstrap';
+import React, { useState } from 'react';
+import { FormGroup, FormControl, FormText } from 'react-bootstrap';
 
 interface IProps {
-  showHints: boolean,
-  hint: string,
-  autoFocus?: boolean,
-  name: string,
-  placeholder: string,
-  isValid: boolean,
-  value: string,
-  onKeyPress: (event: React.KeyboardEvent) => void,
-  onChange: (event: any) => void
+  showHints: boolean;
+  hint: string;
+  autoFocus?: boolean;
+  name: string;
+  placeholder: string;
+  isValid: boolean;
+  value: string;
+  onKeyPress: (event: React.KeyboardEvent) => void;
+  onChange: (event: any) => void;
 }
 
 function InputGroup(props: IProps) {
   const [isFocused, setIsFocused] = useState<boolean>(false);
-  const {showHints, hint, autoFocus, name, placeholder, isValid, value, onKeyPress, onChange} = props;
+  const {
+    showHints,
+    hint,
+    autoFocus,
+    name,
+    placeholder,
+    isValid,
+    value,
+    onKeyPress,
+    onChange
+  } = props;
 
   return (
     <FormGroup>
@@ -27,13 +37,17 @@ function InputGroup(props: IProps) {
         value={value}
         isValid={isValid}
         isInvalid={!!value && !isFocused && !isValid}
-        onFocus={() => {setIsFocused(true)}}
-        onBlur={() => {setIsFocused(false)}}
+        onFocus={() => {
+          setIsFocused(true);
+        }}
+        onBlur={() => {
+          setIsFocused(false);
+        }}
         onKeyPress={onKeyPress}
         onChange={onChange}
       />
     </FormGroup>
-  )
+  );
 }
 
 export default InputGroup;
